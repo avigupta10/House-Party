@@ -8,5 +8,8 @@
   "private": true,
   "cacheDirectories": [
     "frontend/node_modules"
-  ]
+  ],
+  "scripts": {
+    "postinstall": "npm run build"
+  }
 }
