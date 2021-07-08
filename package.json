@@ -1,14 +1,7 @@
 {
-  "name": "house_party",
-  "version": "1.0.0",
-  "main": "index.js",
-  "repository": "",
-  "author": "Avi Gupta",
-  "license": "MIT",
+  "name": "frontend",
+  "version": "0.1.0",
   "private": true,
-  "cacheDirectories": [
-    "frontend/node_modules"
-  ],
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -19,5 +12,23 @@
   "engines": {
     "node": "15.12.0",
     "npm": "7.6.3"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
