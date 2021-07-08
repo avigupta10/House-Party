@@ -1,0 +1,12 @@
+{
+  "name": "house_party",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "",
+  "author": "Avi Gupta",
+  "license": "MIT",
+  "private": true,
+  "cacheDirectories": [
+    "frontend/node_modules"
+  ]
+}

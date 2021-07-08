@@ -1,0 +1,12 @@
+.log
+*.pot
+*.pyc
+.env
+.env.staging
+__pycache__/
+local_settings.py
+db.sqlite3
+media
+
+# don't track virtualenv, ever!
+venv/
