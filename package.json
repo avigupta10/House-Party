@@ -8,12 +8,5 @@
   "private": true,
   "cacheDirectories": [
     "frontend/node_modules"
-  ],
-  "scripts": {
-    "postinstall": "npm run build"
-  },
-  "engines": {
-    "node": "15.12.0",
-    "npm": "7.6.3"
-  }
+  ]
 }
