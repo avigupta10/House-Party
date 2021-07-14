@@ -4,19 +4,22 @@ from django.shortcuts import redirect
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+import json
 
 from backend.models import Room
-from .misc import create_update_tokens, CheckAuthentication, get_spotifyAPI_data, update_room_song, get_user_data
+from .misc import create_update_tokens, CheckAuthentication, get_spotifyAPI_data, update_room_song, get_user_data, \
+    get_user_tokens
 from .models import Vote
 from .secrets import CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
 
-PLAYLIST_ENDPOINT = "https://api.spotify.com/v1/users/{user_id}/playlists"
-PLAY_ENDPOINT = "/player/play"
-SKIP_ENDPOINT = "/player/next"
-PAUSE_ENDPOINT = "/player/pause"
-CURRENT_SONG_ENDPOINT = "/player/currently-playing"
-SEARCH_ENDPOINT = "	https://api.spotify.com/v1/search"
-USER_ALBUMS_ENDPOINT = "/albums"
+PLAYLIST_ENDPOINT = "/users/{user_id}/playlists"
+PLAY_ENDPOINT = "/me/player/play"
+SKIP_ENDPOINT = "/me/player/next"
+PAUSE_ENDPOINT = "/me/player/pause"
+CURRENT_SONG_ENDPOINT = "/me/player/currently-playing"
+SEARCH_ENDPOINT = "/search"
+USER_ALBUMS_ENDPOINT = "/me/albums"
+QUEUE_ENDPOINT = '/me/player/queue'
 
 
 @api_view(['GET'])
@@ -35,8 +38,8 @@ def get_auth_url(request):
 
 def spotify_callback(request):
     code = request.GET.get('code')
-    error = request.GET.get('error')
-    print(error)
+    if 'error' in request.GET:
+        raise PermissionDenied
 
     response = requests.post('https://accounts.spotify.com/api/token', data={
         'grant_type': 'authorization_code',
@@ -155,3 +158,43 @@ def SkipSong(request):
         vote.save()
 
     return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['GET'])
+def SearchSong(request):
+    room_code = request.session.get('room_code')
+    room = Room.objects.filter(code=room_code)
+    if room.exists():
+        room = room[0]
+        q = request.GET.get('query')
+        print(SEARCH_ENDPOINT + f'?q={q}&type=track')
+        response = get_spotifyAPI_data(room.host, SEARCH_ENDPOINT + f'?q={q}&type=track')
+
+        track_names = \
+            [
+                {
+                    "name": response['tracks']['items'][i]['name'],
+                    "uri": response['tracks']['items'][i]['uri']
+                }
+                for i in range(10)
+            ]
+        return Response(track_names, status=status.HTTP_200_OK)
+
+    return Response({'error': 'not in room'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['PUT', "POST"])
+def Play(request):
+    uris = request.data.get('uris')
+    session_key = request.session.session_key
+    tokens = get_user_tokens(session_key)
+    if tokens:
+        headers = {'Content-Type': 'application/json', 'Authorization': f'Bearer {tokens.access_token}'}
+        payload = {"uris": [uris]}
+        resp = requests.put('https://api.spotify.com/v1/me/player/play', headers=headers, data=json.dumps(payload))
+        print(resp.json())
+        return Response(resp.json(), status=status.HTTP_204_NO_CONTENT)
+    return Response({}, status=status.HTTP_403_FORBIDDEN)
+
+
+

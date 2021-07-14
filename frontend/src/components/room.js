@@ -3,6 +3,7 @@ import {Button, Grid, Typography} from '@material-ui/core';
 import {Tune} from '@material-ui/icons';
 import CreateRoomPage from "./createroompage";
 import MusicPlayer from "./musicplayer";
+import Search from "./search"
 
 function Room(props) {
     const [votes_to_skip, setVotes] = useState(2)
@@ -125,6 +126,14 @@ function Room(props) {
     }
     return (
         <Grid container spacing={1} align="center">
+            <Grid item xs={12} align="top">
+                <Typography variant="h4" component='h4'>
+                    Logged in as {song.username}
+                </Typography>
+            </Grid>
+            <Grid item xs={12}>
+                <Search />
+            </Grid>
             <Grid item xs={12}>
                 <Typography variant="h4" component='h4'>
                     Code: {code}

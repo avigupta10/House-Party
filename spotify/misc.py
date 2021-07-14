@@ -7,7 +7,7 @@ from django.utils import timezone
 from .models import Token, Vote
 from .secrets import *
 
-BASE_URL = 'https://api.spotify.com/v1/me'
+BASE_URL = 'https://api.spotify.com/v1'
 
 
 def get_user_tokens(session_key):
@@ -49,7 +49,7 @@ def CheckAuthentication(session_key):
 
 def refresh_spotify_token(session_key):
     refresh_token = get_user_tokens(session_key).refresh_token
-
+    print('refreshing token')
     response = requests.post('https://accounts.spotify.com/api/token', data={
         'grant_type': 'refresh_token',
         'refresh_token': refresh_token,
@@ -104,4 +104,4 @@ def update_room_song(room, song_id):
 
 
 def get_user_data(host):
-    return get_spotifyAPI_data(host, '')
+    return get_spotifyAPI_data(host, '/me')
