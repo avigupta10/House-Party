@@ -103,14 +103,14 @@ def CurrentSong(request):
 
     votes = len(Vote.objects.filter(room=room, song_id=song_id))
 
-    if request.session.session_key == room.host:
-        _username = get_user_data(host)['display_name']
-    else:
-        _username = 'Guest'
     try:
+        if request.session.session_key == room.host:
+            _username = get_user_data(host)['display_name']
+        else:
+            _username = 'Guest'
         song_data = {
             'username': _username,
-            'guest_name': 'Guest',
+            'guest_name': request.session.get('guest_name'),
             'title': item['name'],
             'artist': artists_string,
             'duration': duration,
@@ -124,7 +124,7 @@ def CurrentSong(request):
     except Exception as e:
         song_data = {
             'username': 'Host name',
-            'guest_name': request.session.get('guest_name'),
+            'guest_name': 'Guest',
             'title': 'Song title',
             'artist': 'artists_string',
             'duration': '1000',
