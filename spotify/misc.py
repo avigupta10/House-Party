@@ -90,7 +90,7 @@ def get_spotifyAPI_data(session_key, ENDPOINT, _put=False, _post=False):
         try:
             return response.json()
         except Exception as e:
-            return {'error': 'Invalid request or try to play a song'}
+            return {'error': 'Invalid request or try to play a song ' + str(e)}
     return {'error': 'room doesnt exist'}
 
 

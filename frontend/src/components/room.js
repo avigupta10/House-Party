@@ -127,8 +127,8 @@ function Room(props) {
     return (
         <Grid container spacing={1} align="center">
             <Grid item xs={12} align="top">
-                <Typography variant="h4" component='h4'>
-                    Logged in as {song.username}
+                <Typography variant="p" component='p'>
+                    <blockquote>Logged in as {is_host ? song.username: song.guest_name} </blockquote>
                 </Typography>
             </Grid>
             <Grid item xs={12}>

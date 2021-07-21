@@ -103,18 +103,38 @@ def CurrentSong(request):
 
     votes = len(Vote.objects.filter(room=room, song_id=song_id))
 
-    song_data = {
-        'username': get_user_data(host)['display_name'],
-        'title': item['name'],
-        'artist': artists_string,
-        'duration': duration,
-        'time': progress,
-        'image_url': album_cover,
-        'is_playing': is_playing,
-        'votes': votes,
-        'votes_required': room.votes_to_skip,
-        'id': song_id
-    }
+    if request.session.session_key == room.host:
+        _username = get_user_data(host)['display_name']
+    else:
+        _username = 'Guest'
+    try:
+        song_data = {
+            'username': _username,
+            'guest_name': 'Guest',
+            'title': item['name'],
+            'artist': artists_string,
+            'duration': duration,
+            'time': progress,
+            'image_url': album_cover,
+            'is_playing': is_playing,
+            'votes': votes,
+            'votes_required': room.votes_to_skip,
+            'id': song_id
+        }
+    except Exception as e:
+        song_data = {
+            'username': 'Host name',
+            'guest_name': request.session.get('guest_name'),
+            'title': 'Song title',
+            'artist': 'artists_string',
+            'duration': '1000',
+            'time': '1000',
+            'image_url': 'album_cover',
+            'is_playing': False,
+            'votes': 'votes',
+            'votes_required': 'votes_to_skip',
+            'id': 'song_id'
+        }
 
     update_room_song(room=room, song_id=song_id)
 
@@ -197,4 +217,11 @@ def Play(request):
     return Response({}, status=status.HTTP_403_FORBIDDEN)
 
 
-
+@api_view(["POST"])
+def set_guest_name(request):
+    name = request.data.get('name')
+    if request.session.session_key:
+        request.session['guest_name'] = name
+        return Response({'success':name}, status=status.HTTP_202_ACCEPTED)
+    else:
+        return Response({'error': 'No Session'}, status=status.HTTP_418_IM_A_TEAPOT)

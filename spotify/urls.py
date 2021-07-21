@@ -13,4 +13,5 @@ urlpatterns = [
     path('skip-song', views.SkipSong, name='skip-song'),
     path('search-song', views.SearchSong, name='search-song'),
     path('play-search', views.Play, name='play-search'),
+    path('set-name', views.set_guest_name, name='set-name'),
 ]
