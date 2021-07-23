@@ -4,6 +4,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from spotify.models import Listeners
 from .models import Room
 from .serializers import RoomSerializer, CreateRoomSerializer, SettingsSerializer
 
@@ -25,7 +26,7 @@ class GetRoom(APIView):
                 data['is_host'] = request.session.session_key == room[0].host
                 return Response(data, status=status.HTTP_200_OK)
             return Response({'Room Not found': "Invalid Room Code"}, status=status.HTTP_404_NOT_FOUND)
-        return Response({'Bad Request':'Code Not Found'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'Bad Request': 'Code Not Found'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class JoinRoom(APIView):
@@ -40,7 +41,7 @@ class JoinRoom(APIView):
             if obj.exists():
                 room = obj[0]
                 self.request.session['room_code'] = room.code
-                return Response({'Success':'Room Joined'}, status=status.HTTP_200_OK)
+                return Response({'Success': 'Room Joined'}, status=status.HTTP_200_OK)
             return Response({'error': 'Room Not Found'}, status=status.HTTP_404_NOT_FOUND)
         return Response({'error': 'Invalid Code'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -75,12 +76,20 @@ class UserInRoom(APIView):
 
 class DeleteRoom(APIView):
     def post(self, request):
+        if 'guest_name' in self.request.session:  # Delete all guest instances
+            del self.request.session['guest_name']
+
         if 'room_code' in self.request.session:
             del self.request.session['room_code']
+
             host = self.request.session.session_key
+            Listeners.objects.filter(user=host).delete()
+
             res = Room.objects.filter(host=host)
-            if res.exists():
+
+            if res.exists():  # Deleting ROOM if Host
                 room = res[0]
+                Listeners.objects.filter(room=room).delete()
                 room.delete()
         return Response({'Message': 'Room deleted'}, status=status.HTTP_200_OK)
 

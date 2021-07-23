@@ -2,7 +2,7 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
-	background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab, lavender, lavenderblush, yellowgreen, red, cadetblue);
+	background: linear-gradient(-45deg, rgba(137, 34, 34, 0.83), #e73c7e, #103f58, rgba(209, 222, 185, 0.99), lavender, lavenderblush, yellowgreen, red, cadetblue);
 	background-size: 400% 400%;
 	animation: gradient 8s ease infinite;
 }

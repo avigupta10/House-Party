@@ -9,7 +9,7 @@ import json
 from backend.models import Room
 from .misc import create_update_tokens, CheckAuthentication, get_spotifyAPI_data, update_room_song, get_user_data, \
     get_user_tokens
-from .models import Vote
+from .models import Vote, Listeners
 from .secrets import CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
 
 PLAYLIST_ENDPOINT = "/users/{user_id}/playlists"
@@ -85,7 +85,6 @@ def CurrentSong(request):
 
     if 'error' in response or 'item' not in response:
         return Response({'error': response['error']}, status=status.HTTP_204_NO_CONTENT)
-
     item = response.get('item')
     duration = item.get('duration_ms')
     progress = response.get('progress_ms')
@@ -95,7 +94,7 @@ def CurrentSong(request):
 
     artists_string = ''
 
-    for i, artist in enumerate(item['artists']):  # if we had multiple artist
+    for i, artist in enumerate(item['artists']):  # if we have multiple artist
         if i > 0:
             artists_string += ', '
         name = artist['name']
@@ -104,12 +103,17 @@ def CurrentSong(request):
     votes = len(Vote.objects.filter(room=room, song_id=song_id))
 
     try:
-        if request.session.session_key == room.host:
-            _username = get_user_data(host)['display_name']
-        else:
-            _username = 'Guest'
+        # if request.session.session_key == room.host:
+        #     _username = get_user_data(host)['display_name']
+        # else:
+        #     _username = 'Guest'
+        _username = get_user_data(host)['display_name']
+
+        GUESTS = [e.name for e in Listeners.objects.all()]
+
         song_data = {
             'username': _username,
+            'GUESTS': GUESTS,
             'guest_name': request.session.get('guest_name'),
             'title': item['name'],
             'artist': artists_string,
@@ -121,9 +125,10 @@ def CurrentSong(request):
             'votes_required': room.votes_to_skip,
             'id': song_id
         }
-    except Exception as e:
+    except Exception as e:  # KeyError
         song_data = {
             'username': 'Host name',
+            'GUESTS': [],
             'guest_name': 'Guest',
             'title': 'Song title',
             'artist': 'artists_string',
@@ -220,8 +225,15 @@ def Play(request):
 @api_view(["POST"])
 def set_guest_name(request):
     name = request.data.get('name')
-    if request.session.session_key:
-        request.session['guest_name'] = name
-        return Response({'success':name}, status=status.HTTP_202_ACCEPTED)
-    else:
-        return Response({'error': 'No Session'}, status=status.HTTP_418_IM_A_TEAPOT)
+    room_code = request.session.get('room_code')
+    room = Room.objects.filter(code=room_code)
+    if room.exists():
+        room = room[0]
+        if request.session.session_key:
+            obj = Listeners.objects.create(name=name, user=request.session.session_key, room=room,
+                                           is_host=room.host == request.session.session_key)
+            obj.save()
+            request.session['guest_name'] = name
+            return Response({'success': name}, status=status.HTTP_202_ACCEPTED)
+        else:
+            return Response({'error': 'No Session'}, status=status.HTTP_418_IM_A_TEAPOT)

@@ -21,3 +21,6 @@ class Room(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     current_song = models.CharField(max_length=50, null=True)
 
+
+
+

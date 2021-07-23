@@ -16,3 +16,10 @@ class Vote(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     song_id = models.CharField(max_length=50)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
+
+
+class Listeners(models.Model):
+    room = models.ForeignKey(Room, on_delete=models.CASCADE)
+    name = models.CharField(max_length=20, null=True)
+    user = models.CharField(max_length=50, unique=True)
+    is_host = models.BooleanField(null=False, default=False)

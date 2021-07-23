@@ -29,7 +29,6 @@ function MusicPlayer(props) {
         }
         fetch('/spotify/skip-song', options)
     };
-    console.log(songProgress)
     return (
         <Card>
             <Grid container spacing={1} align="center">
