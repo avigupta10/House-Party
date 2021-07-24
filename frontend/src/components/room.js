@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {Button, Grid, makeStyles, Typography} from '@material-ui/core';
+import {Button, Grid, Typography} from '@material-ui/core';
 import {Tune} from '@material-ui/icons';
 import CreateRoomPage from "./createroompage";
 import MusicPlayer from "./musicplayer";
@@ -67,7 +67,7 @@ function Room(props) {
     const getCurrentSong = () => {
         fetch('/spotify/current-song').then((response) => {
             if (!response.ok) {
-                return {};
+                return {'Error': 'Play a song'};
             } else {
                 return response.json();
             }
@@ -128,37 +128,44 @@ function Room(props) {
         return settingsPage();
     }
 
+    function MainRoomComponent() {
+        return (
+            <div>
+                <Grid item xs={12} align='center'>
+                    <ListenerModal song={song} hostName={hostName}/>
+                </Grid>
+                <Grid container spacing={1} align="center">
+                    <Grid item xs={12} align="top">
+                        <Typography variant="p" component='p'>
+                            <blockquote>Logged in as {is_host ? hostName : song.guest_name} </blockquote>
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Search/>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Typography variant="h4" component='h4'>
+                            Code: {code}
+                        </Typography>
+                    </Grid>
+                    <MusicPlayer time={song.time} duration={song.duration} name={song.username} votes={song.votes}
+                                 votes_required={song.votes_required} song_title={song.title}
+                                 is_playing={song.is_playing} image_url={song.image_url} artist={song.artist}/>
+                    {is_host ? settingButton() : null}
+                    <Grid item xs={12}>
+                        <Button color='secondary' variant='contained' onClick={leaveRoom}>
+                            Leave Room
+                        </Button>
+                    </Grid>
+                </Grid>
+            </div>
+        )
+    }
 
     return (
-        <div>
-            <Grid item xs={12} align='center'>
-                <ListenerModal song={song} hostName={hostName} />
-            </Grid>
-            <Grid container spacing={1} align="center">
-                <Grid item xs={12} align="top">
-                    <Typography variant="p" component='p'>
-                        <blockquote>Logged in as {is_host ? hostName : song.guest_name} </blockquote>
-                    </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                    <Search/>
-                </Grid>
-                <Grid item xs={12}>
-                    <Typography variant="h4" component='h4'>
-                        Code: {code}
-                    </Typography>
-                </Grid>
-                <MusicPlayer time={song.time} duration={song.duration} name={song.username} votes={song.votes}
-                             votes_required={song.votes_required} song_title={song.title}
-                             is_playing={song.is_playing} image_url={song.image_url} artist={song.artist}/>
-                {is_host ? settingButton() : null}
-                <Grid item xs={12}>
-                    <Button color='secondary' variant='contained' onClick={leaveRoom}>
-                        Leave Room
-                    </Button>
-                </Grid>
-            </Grid>
-        </div>
+        <Grid container spacing={1} align="center">
+            {song.username ? MainRoomComponent() : "No Song is Playing From The Requested Spotify Account.Try To Play A Song"}
+        </Grid>
     )
 }
 
