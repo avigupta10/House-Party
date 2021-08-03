@@ -128,6 +128,24 @@ function Room(props) {
         return settingsPage();
     }
 
+    function NoSongComponent() {
+        return (
+            <div>
+                <Grid item xs={12} align='center'>
+                    <Typography variant="p" component='p'>
+                        <blockquote>No Song is Playing From The Requested Spotify Account.Try To Play A Song And Refresh
+                        </blockquote>
+                    </Typography>
+                </Grid>
+                <Grid item xs={12}>
+                    <Button color='secondary' variant='contained' onClick={leaveRoom}>
+                        Leave Room
+                    </Button>
+                </Grid>
+            </div>
+        );
+    }
+
     function MainRoomComponent() {
         return (
             <div>
@@ -164,9 +182,10 @@ function Room(props) {
 
     return (
         <Grid container spacing={1} align="center">
-            {song.username ? MainRoomComponent() : "No Song is Playing From The Requested Spotify Account.Try To Play A Song"}
+            {song.username ? MainRoomComponent() : NoSongComponent() }
         </Grid>
     )
 }
 
 export default Room;
+
