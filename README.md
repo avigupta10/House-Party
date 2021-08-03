@@ -2,6 +2,14 @@
 
 Django React Application with Spotify API
 
+1. User can authenticate our application to access their data with a certain scope
+
+2. After the user has logged in and granted authorization we obtain access/refresh tokens
+
+3. User access token is used to make requests to the Spotify API
+
+4. After one's access token has expired, we request a new one using the refresh token (stays constant) to continue interacting with the Spotify API
+
 # Try It
 
 https://house-party-spotify.herokuapp.com/
