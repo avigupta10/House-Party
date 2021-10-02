@@ -133,7 +133,8 @@ function Room(props) {
             <div>
                 <Grid item xs={12} align='center'>
                     <Typography variant="p" component='p'>
-                        <blockquote>No Song is Playing From The Requested Spotify Account.Try To Play A Song And Refresh
+                        <blockquote>
+                            No Song is Playing From The Requested Spotify Account.Try To Play A Song And Refresh
                         </blockquote>
                     </Typography>
                 </Grid>
@@ -141,6 +142,20 @@ function Room(props) {
                     <Button color='secondary' variant='contained' onClick={leaveRoom}>
                         Leave Room
                     </Button>
+                </Grid>
+            </div>
+        );
+    }
+
+    function SpotifyNotAuthenticated() {
+        return (
+            <div>
+                <Grid item xs={12} align='center'>
+                    <Typography variant="p" component='p'>
+                        <blockquote>
+                            Please Wait. You're Being Redirected to Spotify For Authentication
+                        </blockquote>
+                    </Typography>
                 </Grid>
             </div>
         );
@@ -182,10 +197,12 @@ function Room(props) {
 
     return (
         <Grid container spacing={1} align="center">
-            {song.username ? MainRoomComponent() : NoSongComponent() }
+            {spotifyAuthenticated ? song.username ? MainRoomComponent() : NoSongComponent() : SpotifyNotAuthenticated() }
         </Grid>
     )
 }
 
 export default Room;
+
+
 
