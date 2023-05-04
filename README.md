@@ -12,7 +12,7 @@ Django React Application with Spotify API
 
 # Try It
 
-https://house-party-spotify.herokuapp.com/
+https://house-party-spotify.herokuapp.com/ (Heroku license expried)
 
 ## Setup Instructions
 
