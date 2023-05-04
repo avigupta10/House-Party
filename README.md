@@ -2,9 +2,9 @@
 
 Django React Application with Spotify API
 
-1. User can authenticate our application to access their data with a certain scope
+1. User can authenticate with our application to access their data with a certain scope
 
-2. After the user has logged in and granted authorization we obtain access/refresh tokens
+2. After the user has logged in and granted authorization, we obtain the access/refresh tokens
 
 3. User access token is used to make requests to the Spotify API
 
